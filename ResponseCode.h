@@ -47,6 +47,7 @@ public:
     static const int ClatdStatusResult         = 223;
     static const int InterfaceGetMtuResult     = 224;
     static const int GetMarkResult             = 225;
+    static const int V6RtrAdvResult            = 226;
 
     // 400 series - The command was accepted but the requested action
     // did not take place.
