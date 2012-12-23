@@ -18,7 +18,6 @@ LOCAL_SRC_FILES:=                                      \
                   PppController.cpp                    \
                   ResolverController.cpp               \
                   SecondaryTableController.cpp         \
-                  SoftapController.cpp                 \
                   TetherController.cpp                 \
                   ThrottleController.cpp               \
                   oem_iptables_hook.cpp                \
@@ -40,6 +39,25 @@ LOCAL_CFLAGS := -Werror=format
 
 LOCAL_SHARED_LIBRARIES := libstlport libsysutils libcutils libnetutils \
                           libcrypto libhardware_legacy libmdnssd libdl
+
+ifdef USES_TI_MAC80211
+  LOCAL_SRC_FILES += SoftapControllerTI.cpp
+else
+  LOCAL_SRC_FILES += SoftapController.cpp
+endif
+
+
+ifneq ($(BOARD_HOSTAPD_DRIVER),)
+  LOCAL_CFLAGS += -DHAVE_HOSTAPD
+  ifneq ($(BOARD_HOSTAPD_DRIVER_NAME),)
+    LOCAL_CFLAGS += -DHOSTAPD_DRIVER_NAME=\"$(BOARD_HOSTAPD_DRIVER_NAME)\"
+  endif
+endif
+
+ifeq ($(BOARD_HAVE_BLUETOOTH),true)
+  LOCAL_SHARED_LIBRARIES := $(LOCAL_SHARED_LIBRARIES) libbluedroid
+  LOCAL_CFLAGS := $(LOCAL_CFLAGS) -DHAVE_BLUETOOTH
+endif
 
 include $(BUILD_EXECUTABLE)
 
