@@ -228,9 +228,6 @@ void SoftapController::generatePsk(char *ssid, char *passphrase, char *psk_str) 
  */
 int SoftapController::fwReloadSoftap(int argc, char *argv[])
 {
-#ifdef USES_TI_MAC80211
-    return 0;
-#else
     int ret, i = 0;
     char *iface;
     char *fwpath;
@@ -263,7 +260,6 @@ int SoftapController::fwReloadSoftap(int argc, char *argv[])
         ALOGD("Softap fwReload - Ok");
     }
     return ret;
-#endif
 }
 
 int SoftapController::clientsSoftap(char **retbuf)
