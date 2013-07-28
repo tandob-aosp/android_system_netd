@@ -198,25 +198,6 @@ int NatController::enableNat(const int argc, char **argv) {
     runCmd(ARRAY_SIZE(cmd2), cmd2);
 
     natCount++;
-    // add this if we are the first added nat
-    if (natCount == 1) {
-        snprintf(cmd, sizeof(cmd), "-t nat -A natctrl_nat_POSTROUTING -o %s -j MASQUERADE", extIface);
-        if (runCmd(IPTABLES_PATH, cmd)) {
-            ALOGE("Error seting postroute rule: %s", cmd);
-            // unwind what's been done, but don't care about success - what more could we do?
-            for (i = 0; i < addrCount; i++) {
-                secondaryTableCtrl->modifyLocalRoute(tableNumber, DEL, intIface, argv[5+i]);
-
-                secondaryTableCtrl->modifyFromRule(tableNumber, DEL, argv[5+i]);
-            }
-            setDefaults();
-            return -1;
-        }
-
-        if (runCmd(IPTABLES_PATH, "-t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu"))
-            ALOGW("Unable to set TCPMSS rule (may not be supported by kernel).");
-    }
-
     return 0;
 }
 
