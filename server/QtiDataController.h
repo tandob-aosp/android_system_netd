@@ -28,29 +28,16 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _QTI_CONNECTIVITY_ADAPTER_H
-#define _QTI_CONNECTIVITY_ADAPTER_H
-
-#include <string>
+#ifndef _QTI_DATA_CONTROLLER_H
+#define _QTI_DATA_CONTROLLER_H
 
 #include <sysutils/SocketClient.h>
-#include <sysutils/SocketListener.h>
 
-#include "CommandListener.h"
-#include "NetdCommand.h"
+#define NETID_INVALID UINT_MAX
 
-NetdCommand *getQtiConnectivityCmd(CommandListener *broadcaster);
-bool isUsbIface(const char* iface);
-void natStarted(const char* tetherIface, const char* upstreamIface);
-void natStopped(const char* tetherIface, const char* upstreamIface);
-int getV6TetherStats(SocketClient *cli, const char* tetherIface, const char* upstreamIface,
-        std::string &extraProcessingInfo);
+ void initializeDataControllerLib();
+ int blockAllData();
+ int unblockAllData();
+ unsigned checkAppInWhitelist(SocketClient *cli);
 
-class QtiConnectivityCommand : NetdCommand {
-public:
-   QtiConnectivityCommand() : NetdCommand("qticonnectivity") {}
-   virtual ~QtiConnectivityCommand() {}
-   int runCommand(SocketClient* client, int argc, char** argv);
-   NetdCommand *asNetdCommand();
-};
 #endif

@@ -46,6 +46,7 @@
 #include "RouteController.h"
 #include "UidRanges.h"
 #include "QtiConnectivityAdapter.h"
+#include "QtiDataController.h"
 
 #ifdef QSAP_WLAN
 #include "qsap_api.h"
@@ -216,6 +217,7 @@ CommandListener::CommandListener() :
         sClatdCtrl = new ClatdController(sNetCtrl);
     if (!sStrictCtrl)
         sStrictCtrl = new StrictController();
+    initializeDataControllerLib();
 
     /*
      * This is the only time we touch top-level chains in iptables; controllers
@@ -1227,6 +1229,60 @@ int CommandListener::BandwidthControlCmd::runCommand(SocketClient *cli, int argc
         }
         return 0;
 
+    }
+    if (!strcmp(argv[1], "blockAllData")) {
+        if (argc < 2) {
+            sendGenericSyntaxError(cli, "zerobalanceblock");
+            return 0;
+        }
+        int rc = blockAllData();
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "unblockAllData")) {
+        if (argc < 2) {
+            sendGenericSyntaxError(cli, "zerobalance unblock");
+            return 0;
+        }
+        int rc = unblockAllData();
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "addrestrictappsondata")) {
+        if (argc < 3) {
+            sendGenericSyntaxError(cli, "addrestrictappsondata <appUid> ...");
+            return 0;
+        }
+        int rc = sBandwidthCtrl->addRestrictAppsOnData(argc - 2, argv + 2);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "removerestrictappsondata")) {
+        if (argc < 3) {
+            sendGenericSyntaxError(cli, "removerestrictappsondata <appUid> ...");
+            return 0;
+        }
+        int rc = sBandwidthCtrl->removeRestrictAppsOnData(argc - 2, argv + 2);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "addrestrictappsonwlan")) {
+        if (argc < 3) {
+            sendGenericSyntaxError(cli, "addrestrictappsonwlan <appUid> ...");
+            return 0;
+        }
+        int rc = sBandwidthCtrl->addRestrictAppsOnWlan(argc - 2, argv + 2);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "removerestrictappsonwlan")) {
+        if (argc < 3) {
+            sendGenericSyntaxError(cli, "removerestrictappsonwlan <appUid> ...");
+            return 0;
+        }
+        int rc = sBandwidthCtrl->removeRestrictAppsOnWlan(argc - 2, argv + 2);
+        sendGenericOkFail(cli, rc);
+        return 0;
     }
 
     cli->sendMsg(ResponseCode::CommandSyntaxError, "Unknown bandwidth cmd", false);
